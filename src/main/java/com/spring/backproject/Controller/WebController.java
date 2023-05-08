@@ -24,6 +24,9 @@ import org.thymeleaf.expression.Strings;
 import org.thymeleaf.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -80,6 +83,9 @@ if(userRepository.existsByEmail(registerDto.getEmail())){
         user.setFirstName(registerDto.getFirstName());
         user.setLastName(registerDto.getLastName());
         user.setEmail(registerDto.getEmail());
+        user.setEmployeecode(registerDto.getEmployeecode());
+        user.setResponsableequipe(registerDto.getResponsableequipe());
+        user.setRole(registerDto.getRole());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setFirstLogin(true);
         userRepository.save(user);
@@ -153,6 +159,20 @@ System.out.println("true");
         List<Utilisateur> utilisateurs = userRepository.findAll();
         return ResponseEntity.ok().body(utilisateurs);
     }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Effectuez les opérations de déconnexion, telles que l'invalidation de la session et la suppression des cookies
+        request.getSession().invalidate();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            }
+        }
 
+        // Répondez avec un message de déconnexion réussie
+        return ResponseEntity.ok().body(new AuthResponse(true,"Logout successful"));
+    }
 
 }

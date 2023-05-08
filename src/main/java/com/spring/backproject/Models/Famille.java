@@ -1,12 +1,9 @@
 package com.spring.backproject.Models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "Famille")
@@ -36,7 +33,7 @@ public class Famille {
     private Short ordre = 0;
 
     @Column(name = "UPDATE")
-    private String update;
+    private Date update;
 
     @Column(name = "GuidedMethFilter")
     private Boolean guidedMethFilter;

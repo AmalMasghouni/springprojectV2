@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 @Data
 public class RegisterDto {
+   private Long id;
     @NotNull
     private String firstName;
     @NotNull
@@ -25,5 +26,8 @@ public class RegisterDto {
     @Size(min = 8)
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$")
     private String password;
+    private String responsableequipe;
+    private String role;
+    private String employeecode;
     private boolean firstLogin;
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 public class FamilleDto {
@@ -23,7 +24,7 @@ public class FamilleDto {
     private Short ordre ;
 
     @Column(name = "UPDATE")
-    private String update;
+    private Date update;
 
     @Column(name = "GuidedMethFilter")
     private Boolean guidedMethFilter;

@@ -1,5 +1,7 @@
 package com.spring.backproject.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Vehid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +32,7 @@ public class Vehid {
     @Column(name = "TESTGLOBAL")
     private Boolean testGlobal ;
 
-    @Column(name = "MSG_DIAG", length = 350)
+    @Column(name = "MSG_DIAG")
     private String msgDiag;
 
     @Column(name = "GRPMARQ")
@@ -40,8 +43,6 @@ public class Vehid {
 
     @Column(name = "T")
     private String t;
-
-
     @Column(name = "UPD")
     private Date upd;
 
@@ -57,7 +58,10 @@ public class Vehid {
     @Column(name = "AVERTISS_HYBRID")
     private Boolean avertissHybrid ;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+   @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdMarque")
+   @JsonProperty("marque")
     private Marque marque;
+
+
 }

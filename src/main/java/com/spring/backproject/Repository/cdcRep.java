@@ -13,4 +13,6 @@ public interface cdcRep extends JpaRepository<CDC,Long> {
     //INNER JOIN  c.devs ORDER BY c.refCDCArdia
     List<String> findAllRefCDC();
     /*List<CDC> findByNom(String nom);*/
+
+    List<CDC> findByRefCDC(String refCDC);
 }

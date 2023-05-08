@@ -12,5 +12,7 @@ public interface devrep extends JpaRepository<DEV,Long> {
 
    @Query("SELECT DISTINCT d.nomDev FROM DEV d")
     List<String> findAllNomDev();
+    List<DEV> findByCdcNomCDCOrCdcIdSite(String nomCDC,Integer idSite);
+
 
 }

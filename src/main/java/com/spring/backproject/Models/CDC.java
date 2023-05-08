@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.security.Timestamp;
+import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -37,14 +38,15 @@ public class CDC {
     @Column(name = "IdSite")
     private Integer idSite;
 
-    @Column(name = "Création")
-    private Timestamp création;
+    @Column(name = "Creation")
+    private Timestamp creation;
 
     @Column(name = "SignatureOk")
     private Boolean signatureOk;
 
     @Column(name = "RefCDCArdia", length = 10)
     private String refCDCArdia;
+
     @OneToMany(mappedBy = "cdc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DEV> devs;
 }

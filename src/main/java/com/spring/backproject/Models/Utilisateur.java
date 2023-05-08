@@ -33,6 +33,13 @@ public class Utilisateur {
 @Size(min = 8)
 @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$")
     private String password;
+@Column(name = "responsableEqu")
+    private String responsableequipe;
+@Column(name="role")
+    private String role;
+@Column(name="employeCode")
+    private String employeecode;
+
     @Column(name = "first_login",nullable = false)
     private boolean firstLogin=false;
 
