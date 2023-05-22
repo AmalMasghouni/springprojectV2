@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Getter
@@ -46,5 +47,9 @@ public class Utilisateur {
     public boolean isFirstLogin() {
         return firstLogin;
     }
+@ManyToOne(fetch = FetchType.LAZY)
+    private SITES sites;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<DEV> DEVList;
 
 }

@@ -21,7 +21,18 @@ public class FamilleController {
     @Autowired
     FamilleRep familleRep;
     @PostMapping("/ajout-famille")
-    public ResponseEntity<?> AjoutFamille(@RequestBody Famille famille){
+    public ResponseEntity<?> AjoutFamille(@RequestBody FamilleDto familleDto){
+        Famille famille=new Famille();
+        famille.setNomFamille(familleDto.getNomFamille());
+        famille.setDescrAnglais(famille.getDescrAnglais());
+        famille.setPhrase(familleDto.getPhrase());
+        famille.setOrdre(familleDto.getOrdre());
+        famille.setUpdate(familleDto.getUpdate());
+        famille.setSparePartsFilter(familleDto.getSparePartsFilter());
+        famille.setGuidedMethFilter(familleDto.getGuidedMethFilter());
+        famille.setDescription(familleDto.getDescription());
+        famille.setIdFamilleHynes(familleDto.getIdFamilleHynes());
+        famille.setDescriptionHaynes(familleDto.getDescriptionHaynes());
         Famille savedFamille=familleRep.save(famille);
         return ResponseEntity.ok(savedFamille);
     }
@@ -32,17 +43,23 @@ public class FamilleController {
         famille.setNomFamille(familleDto.getNomFamille());
         famille.setDescrAnglais(famille.getDescrAnglais());
         famille.setPhrase(familleDto.getPhrase());
-        famille.setOrdre(famille.getOrdre());
-        famille.setUpdate(new Date());
+        famille.setOrdre(familleDto.getOrdre());
+        famille.setUpdate(familleDto.getUpdate());
         famille.setSparePartsFilter(familleDto.getSparePartsFilter());
         famille.setGuidedMethFilter(familleDto.getGuidedMethFilter());
         famille.setDescription(familleDto.getDescription());
+        famille.setIdFamilleHynes(familleDto.getIdFamilleHynes());
+        famille.setDescriptionHaynes(familleDto.getDescriptionHaynes());
         final Famille updateFamille=familleRep.save(famille);
         return ResponseEntity.ok(updateFamille);
     }
     @GetMapping("/getAllFamille")
     public ResponseEntity<?>getAllFamille(){
         List<Famille> familles=familleRep.findAll();
+        return ResponseEntity.ok(familles);}
+    @GetMapping("/getfamilleId/{idFamille}")
+    public ResponseEntity<?>getFamilleById(@PathVariable Long idFamille){
+        Famille familles=familleRep.findById(idFamille).orElse(null);
         return ResponseEntity.ok(familles);}
     @DeleteMapping("/delete-famille/{idFamille}")
     public ResponseEntity<?> DeletFamille(@PathVariable Long idFamille){

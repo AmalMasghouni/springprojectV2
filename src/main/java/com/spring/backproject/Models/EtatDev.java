@@ -8,26 +8,23 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "REVERSE")
+@Table(name = "ETAT_DEV")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class REVERSE {
+public class EtatDev {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdReverse")
-    private Integer idReverse;
+    @Column(name = "IdEtatDev")
+    private Integer idEtatDev;
 
-    @Column(name = "NomReverse", length = 50)
-    private String nomReverse;
+    @Column(name = "NomEtatDev", length = 50)
+    private String nomEtatDev;
 
     @Column(name = "NumDico")
     private Integer numDico;
 
-    @Column(name = "PROFIL", length = 30)
-    private String profil;
-
-    @Column(name = "GEO", length = 30)
-    private String geo;
+    @Column(name = "Ordre")
+    private Short ordre;
 }

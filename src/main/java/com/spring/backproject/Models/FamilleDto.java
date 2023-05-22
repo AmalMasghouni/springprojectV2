@@ -8,6 +8,7 @@ import java.util.Date;
 
 @Data
 public class FamilleDto {
+    private Long idFamille;
     @Column(name = "Nomfamille")
     private String nomFamille;
 
@@ -31,4 +32,7 @@ public class FamilleDto {
 
     @Column(name = "SparePartsFilter")
     private Boolean sparePartsFilter;
+    private Integer idFamilleHynes;
+    private String descriptionHaynes;
+
 }

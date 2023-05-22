@@ -1,29 +1,23 @@
 package com.spring.backproject.Controller;
 
 import com.spring.backproject.Models.*;
+import com.spring.backproject.Repository.SiteRep;
 import com.spring.backproject.Repository.UserRepository;
 import com.spring.backproject.Service.EmailService;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.expression.Strings;
-import org.thymeleaf.util.StringUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +38,8 @@ public class WebController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-
+@Autowired
+    SiteRep siteReposi;
 
 
 
@@ -75,11 +70,13 @@ public class WebController {
         }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto){
-if(userRepository.existsByEmail(registerDto.getEmail())){
-    return ResponseEntity.ok().body(new AuthResponse(false, "Un compte qui,existe deja avec cet email"));
-}
-        Utilisateur user=new Utilisateur();
+
+    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            return ResponseEntity.ok().body(new AuthResponse(false, "Un compte qui,existe deja avec cet email"));
+        }
+
+        Utilisateur user = new Utilisateur();
         user.setFirstName(registerDto.getFirstName());
         user.setLastName(registerDto.getLastName());
         user.setEmail(registerDto.getEmail());
@@ -88,10 +85,15 @@ if(userRepository.existsByEmail(registerDto.getEmail())){
         user.setRole(registerDto.getRole());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setFirstLogin(true);
+        if (registerDto.getSite() != null) {
+            SITES SITES = siteReposi.findByNomSite(registerDto.getSite());
+            user.setSites(SITES);
+        }
+
         userRepository.save(user);
 
-        emailService.sendEmail(user.getEmail(),"Mail de confirmation","Bienvenue "+user.getEmail()+" votre compte est crée"+" ansi que votre mot de passe est "+registerDto.getPassword());
-        return ResponseEntity.ok().body(new AuthResponse(true, "Compte cree, " + registerDto.getEmail() ));
+        emailService.sendEmail(user.getEmail(), "Mail de confirmation", "Bienvenue " + user.getEmail() + " votre compte est crée" + " ansi que votre mot de passe est " + registerDto.getPassword());
+        return ResponseEntity.ok().body(new AuthResponse(true, "Compte cree, " + registerDto.getEmail()));
     }
     @PostMapping(value = "/mot-de-passe-oublie")
 

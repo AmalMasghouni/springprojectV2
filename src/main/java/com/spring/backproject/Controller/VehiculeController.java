@@ -28,7 +28,6 @@ public class VehiculeController {
         Vehid vehicule=new Vehid();
         Marque marque = marqueRepo.findByNommar(vehidDto.getMarque())
                 .orElseThrow(() -> new ResourceNotFoundException("Marque introuvable pour ce nom : " + vehidDto.getMarque()));
-
         vehicule.setNomVeh(vehidDto.getNomVeh());
         vehicule.setNomInterne(vehidDto.getNomInterne());
         vehicule.setCodeVeh(vehidDto.getCodeVeh());
@@ -152,8 +151,8 @@ public class VehiculeController {
     }
 
 
-    @GetMapping("/chercherVehiculeparNom")
-    public ResponseEntity<List<Map<String, Object>>> getVehiculeParNOM(@RequestParam("nomVeh") String nomVeh)  {
+    @GetMapping("/chercherVehiculeparNom/{nomVeh}")
+    public ResponseEntity<List<Map<String, Object>>> getVehiculeParNOM(@PathVariable("nomVeh") String nomVeh)  {
          //   @RequestBody Map<String, Object> requestBody
        // String nomVeh = (String) requestBody.get("nomVeh");
         List<Vehid> Listvehicule = vehiculeRepository.findByNomVeh(nomVeh);

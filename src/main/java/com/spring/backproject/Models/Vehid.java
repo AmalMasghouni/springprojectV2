@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Vehid")
@@ -62,6 +64,7 @@ public class Vehid {
     @JoinColumn(name = "IdMarque")
    @JsonProperty("marque")
     private Marque marque;
-
+   @ManyToMany(mappedBy = "vehidList",fetch = FetchType.LAZY)
+private List<DEV> DEVList =new ArrayList<>();
 
 }

@@ -32,7 +32,8 @@ public class MarqueController {
     public ResponseEntity<?>getAllMarque(){
        List<Marque> marques=marqueRepo.findAll();
        return ResponseEntity.ok(marques);}
-    @GetMapping("getMarque/{codmar}")
+    //selecr
+    @GetMapping("/getMarque/{codmar}")
     public ResponseEntity<?> getM(@PathVariable Integer codmar){
         Marque marque=marqueRepo.findById(codmar).orElse(null);
        return ResponseEntity.ok(marque);
@@ -50,8 +51,8 @@ public class MarqueController {
        final Marque updateMarque= marqueRepo.save(marque);
         return ResponseEntity.ok(updateMarque);
     }
-    @GetMapping("/rechercheparNomMarque")
-    public ResponseEntity<?> rechercheNomMarque (@RequestParam("nommar") String nommar) {
+    @GetMapping("/rechercheparNomMarque/{nommar}")
+    public ResponseEntity<?> rechercheNomMarque (@PathVariable("nommar") String nommar) {
 
         List<Marque>marque=marqueRepo.findAllByNommar(nommar);
         if (marque == null) {

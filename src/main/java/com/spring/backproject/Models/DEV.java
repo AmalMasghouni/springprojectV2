@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "DEV")
@@ -33,7 +35,7 @@ public class DEV {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdMenu")
-    private MENU menu;
+    private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdRC")
@@ -41,7 +43,7 @@ public class DEV {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdEcu")
-    private ECU ecu;
+    private Ecu ecu;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdMaj")
@@ -61,7 +63,7 @@ public class DEV {
 
    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdEtatDev")
-    private ETAT_DEV etatDev;
+    private EtatDev etatDev;
 
    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdTypeDev")
@@ -75,5 +77,17 @@ public class DEV {
 
     @Column(name = "IdMajPrecedent")
     private Integer idMajPrecedent;
+    @ManyToMany(fetch = FetchType.LAZY)
+   private List<Cables> cablesList=new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Fonction> fonctionList=new ArrayList<>();
+    @ManyToMany(fetch  =FetchType.LAZY)
+    @JoinTable(name = "dev_vehicule",
+            joinColumns = @JoinColumn(name = "id_dev"),
+            inverseJoinColumns = @JoinColumn(name = "code_veh"))
+    private List<Vehid> vehidList=new ArrayList<>();
+
+
+
 
 }

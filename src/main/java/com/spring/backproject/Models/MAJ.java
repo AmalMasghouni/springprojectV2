@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "MAJ")
@@ -39,4 +40,10 @@ public class MAJ {
 
     @Column(name = "NomMajOffice")
     private String nomMajOffice;
+    @OneToMany(fetch = FetchType.LAZY)
+    List<DEV> DEVList;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private VersionMaj versionMaj;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Cables cables;
 }

@@ -30,4 +30,5 @@ public class RegisterDto {
     private String role;
     private String employeecode;
     private boolean firstLogin;
+    private String site;
 }

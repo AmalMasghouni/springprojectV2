@@ -30,7 +30,7 @@ public class Famille {
     private String descrAnglais;
 
     @Column(name = "Ordre")
-    private Short ordre = 0;
+    private Short ordre;
 
     @Column(name = "UPDATE")
     private Date update;
@@ -40,6 +40,10 @@ public class Famille {
 
     @Column(name = "SparePartsFilter")
     private Boolean sparePartsFilter;
+    @Column(name="IdfamilleHaynes")
+    private Integer idFamilleHynes;
+    @Column(name="DescriptionHaynes")
+    private String descriptionHaynes;
 
 
 }

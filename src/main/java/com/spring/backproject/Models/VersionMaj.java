@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "Version")
+@Table(name = "Ver")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Version {
+public class VersionMaj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idVersion;
@@ -22,4 +23,6 @@ public class Version {
     private String type;
     private Integer ordre;
     private String etat;
+    @OneToMany(fetch = FetchType.LAZY)
+    List<MAJ> MAJList;
 }

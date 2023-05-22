@@ -11,6 +11,7 @@ import java.util.List;
 public interface UserRepository  extends JpaRepository<Utilisateur,Long> {
 boolean existsByEmail(String email);
 Utilisateur findByEmail(String email);
-    @Query("SELECT DISTINCT CONCAT(u.firstName, ' ', u.lastName) FROM Utilisateur u")
+    @Query("SELECT DISTINCT CONCAT(u.firstName,' ', u.lastName) FROM Utilisateur u")
     List<String> findAllUtilisateur();
+    List<Utilisateur> findAllIdByFirstNameAndLastName(String nom,String prenom);
 }

@@ -27,7 +27,7 @@ public class DashbordController {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    @PostMapping("/filtrer")
+    @GetMapping("/filtrer")
     public ResponseEntity<?> filter(@RequestBody Map<String, String> filters) {
         String cdc = filters.get("cdc");
         String dev=filters.get("dev");
@@ -47,68 +47,34 @@ public class DashbordController {
 
         String sql =
                 "SELECT d.id_dev AS n, d.nom_dev, d.etat_dev, c.refCDC, c.nomCDC, d.nomDll, f.nomFamille, e.nom_ecu, CONCAT(u.first_name, ' ', u.last_name) AS developpeur "+
-                        "FROM DEV d " +
+                        "FROM DEV d , VERSIONMAJ V , MARQUE m , Vehid v" +
                         "JOIN CDC c ON d.idcdc = c.idCDC "+
                         "JOIN ECU e ON d.id_ecu = e.id_ecu "+
                         "JOIN Utilisateur u ON d.idrc= u.id "+
-                        "JOIN Famille f ON e.id_famille = f.id_famille ";
+                        "JOIN Famille f ON e.id_famille = f.id_famille "+
+                        "JOIN SITES s ON s.NomSite = u.sitesList "+
+                         "JOIN VersionMaj ver ON ver";
         if(StringUtils.isNotEmpty(cdc)) {
             sql += " WHERE d.idcdc = :cdc " ;
+        }
 
-            parameterSource.addValue("cdc", cdc);
-        }
-        if(StringUtils.isNotEmpty(dev)) {
-            String[] parts = dev.split(" ");
-            String nomUti = parts[0];
-            String prenom = parts[1];
-            String selUtilisateur="SELECT id FROM Utilisateur WHERE firstName=:nomUti and lastName=:prenom ";
-            sql += " JOIN (" + selUtilisateur + ") Utilisateur u ON u.Id = d.IdRC ";
-            parameterSource.addValue("dev", dev);
-        }
         if(StringUtils.isNotEmpty(version)) {
             String nomMaj = version.substring(0, version.indexOf("("));
             String typeMaj = version.substring(version.indexOf("(") + 1, version.indexOf(")"));
+            System.out.println("NOM MAJ +++ : "+nomMaj);
+            sql += " AND V.NomVer = :nomMaj ";
 
-            String selVersion="SELECT idMaj FROM MAJ WHERE nomMaj=:nomMaj and typeMaj=typeMaj ";
-            List<Integer> majIds = namedParameterJdbcTemplate.queryForList(selVersion, new MapSqlParameterSource("nomMaj", nomMaj).addValue("typeMaj", typeMaj), Integer.class);
-            if (majIds.size() > 0) {
-                sql += " WHERE d.idMaj = :idMaj ";
-                parameterSource.addValue("idMaj", majIds.get(0));
-            }}
-        if(StringUtils.isNotEmpty(marque)) {
-            String selIdMarque="SELECT IdMarque FROM Vehid WHERE GRPMOD=:marque";
-            String selMarque="SELECT IdDev FROM Veh_By_Dev WHERE GRPMOD=" + selIdMarque;
-            sql += " JOIN (" + selMarque + ") Veh_By_Dev vm ON vm.IdDev = d.id_dev ";
-            parameterSource.addValue("marque", marque);}
-        if(StringUtils.isNotEmpty(modele)) {
-            String nomModele = modele.substring(0, modele.indexOf("("));
-            String typeInterne= modele.substring(modele.indexOf("(") + 1, modele.indexOf(")"));
-            String selIdMarque="SELECT IdMarque FROM Vehid WHERE nomVeh=:nomModele  AND nomInterne=:typeInterne";
-            String selModele="SELECT IdDev FROM Veh_By_Dev WHERE GRPMOD="+ selIdMarque;
-            sql += " JOIN (" + selModele+ ") Veh_By_Dev vm ON vm.IdDev = d.id_dev ";
-            parameterSource.addValue("modele", modele);}
-
-        if(StringUtils.isNotEmpty(site)) {
-            String selSite="SELECT idSite FROM SITES WHERE nomSite";
-            sql += " WHERE d.idSite = (" + selSite + ")";
-            parameterSource.addValue("nomSite", site);
         }
-        parameterSource.addValue("age","23");
-        parameterSource.addValue("name","name");
-        String query = NamedParameterUtils.substituteNamedParameters("SELECT * FROM my_table WHERE name = :name AND age = :age", parameterSource);
+        if(StringUtils.isNotEmpty(marque)) {
+            sql += " AND m.nommar = :marque ";
+        }
+        if(StringUtils.isNotEmpty(modele)) {
+            sql += " AND ver.nomVeh = :modele ";
+        }
+        /*if(StringUtils.isNotEmpty(site)) {
+            sql += " WHERE d.idSite = (" + selSite + ")";
+        }*/
 
-        MapSqlParameterSource parameterSources = new MapSqlParameterSource();
-        parameterSources.addValue("name", "John");
-        parameterSources.addValue("age", 25);
-
-// Build the query with parameters
-        String queryy = NamedParameterUtils.substituteNamedParameters("SELECT * FROM my_table WHERE name = :name AND age = :age", parameterSources);
-
-// Print the query with parameter values
-        System.out.println(queryy);
-
-
-        System.out.println(query);
 
       /* List<CreerConsulter> results = namedParameterJdbcTemplate.query(sql, parameterSource, (rs, rowNum) -> {
          CreerConsulter tableData = new CreerConsulter();
@@ -198,6 +164,18 @@ public List<Famille> getAllFamille(){
         return ResponseEntity.ok().body(new AuthResponse(true,"famille cree"));
     }*/
 
+    @GetMapping("/filtrer")
+    public ResponseEntity<?> filtrer(
+            @RequestParam(required = false) String modele,
+            @RequestParam(required = false) String marque,
+            @RequestParam(required = false) String version,
+            @RequestParam(required = false) String site,
+            @RequestParam(required = false) String utilisateur,
+            @RequestParam(required = false) String cdc) {
 
+        // Effectuer le traitement en fonction des paramètres reçus
+
+        return ResponseEntity.ok().build();
+    }
 
 }
