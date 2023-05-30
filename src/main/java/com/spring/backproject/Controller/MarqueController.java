@@ -25,7 +25,7 @@ public class MarqueController {
    }
    @DeleteMapping("/delete-marque/{codmar}")
     public ResponseEntity<?> DeletMarque(@PathVariable Integer codmar){
-       marqueRepo.deleteById(codmar);
+
        return ResponseEntity.ok(new AuthResponse(true,"Marque supprimer"));
    }
     @GetMapping("/getAllMarque")

@@ -12,4 +12,5 @@ public interface MajRepository extends JpaRepository<MAJ,Long> {
     @Query("SELECT DISTINCT CONCAT (nomMaj,'(',typeMaj,')') From MAJ")
     List<String> findAllNomMaj();
     List<MAJ> findAllIdMajByNomMajAndTypeMaj(String nomMaj, String typeMaj);
+    Long findIdMajByNomMajAndTypeMaj(String nomMaj, String typeMaj);
 }

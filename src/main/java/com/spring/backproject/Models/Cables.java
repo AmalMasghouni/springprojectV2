@@ -17,9 +17,10 @@ import java.util.List;
 public class Cables {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer idCables ;
     private String actiaName;
     private String atalName;
+    private Integer VCI;
     private Integer numDico;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<DEV> DEVList =new ArrayList<>();

@@ -52,6 +52,9 @@ public class CDC implements Serializable {
     @OneToMany(mappedBy = "cdc", fetch = FetchType.LAZY)
     private List<DEV> DEVS;
     @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "fonction_by_cdc",
+            joinColumns = @JoinColumn(name = "idcdc"),
+            inverseJoinColumns = @JoinColumn(name = "id_fonction"))
     private List<Fonction> fonctionList=new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY)
     private List<Utilisateur> utilisateurList;

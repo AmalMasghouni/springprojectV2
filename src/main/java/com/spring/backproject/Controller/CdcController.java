@@ -76,7 +76,7 @@ public class CdcController {
                     }
 
                     map.put("refCDCArdia", cdc.getRefCDCArdia());
-                    if (cdc.getIdSite() != null) {
+                    /*if (cdc.getIdSite() != null) {
 
                         SITES sites =siteRep.findByIdSite(cdc.getIdCDC().intValue());
 
@@ -86,7 +86,10 @@ public class CdcController {
                             map.put("site", "");
                         }
                     } else {
-                        map.put("site", "");}
+                        map.put("site", "");}*/
+                    if (cdc.getIdSite().intValue()==1)
+                    {map.put("site", "Actia ES");}
+                    else{map.put("Site","Actia France");}
 
                     return map;
                 })
@@ -123,17 +126,19 @@ public ResponseEntity<?> rechercheCDCparVersion (@RequestParam("version") String
                     }
 
                     map.put("refCDCArdia", cdc.getRefCDCArdia());
-                    if (cdc.getIdSite() != null) {
+                   /* if (cdc.getIdSite() != null) {
 
                         SITES sites =siteRep.findByIdSite(cdc.getIdCDC().intValue());
 
-                        if (sites != null) {
-                            map.put("site", sites.getNomSite());
-                        } else {
+                        if (sites != null) {*/
+                            if (cdc.getIdSite().intValue()==1)
+                            {map.put("site", "Actia ES");}
+                            else{map.put("Site","Actia France");}
+                       /* } else {
                             map.put("site", "");
                         }
                     } else {
-                        map.put("site", "");}
+                        map.put("site", "");}*/
 
                     return map;
                 })
@@ -243,6 +248,22 @@ public ResponseEntity<?> rechercheCDCparVersion (@RequestParam("version") String
                     return map;})
                 .collect(Collectors.toList());
         return ResponseEntity.ok(cdcMap);
+    }
+    @GetMapping("/getAllFonctionCDC")
+    public ResponseEntity<?> getAllFonctionCDC(){
+        List<CDC> cdcList=cdcRespositroy.findAll();
+        List<Map<String,Object>> fonct=new ArrayList<>();
+        for (CDC c:cdcList){
+            if (c.getFonctionList()!=null){
+                for (Fonction f : c.getFonctionList()){
+                    Map<String, Object> fonctionMap = new HashMap<>();
+                    fonctionMap.put("nom", f.getNomFonction());
+                    fonctionMap.put("id", f.getIdFonction());
+                    fonct.add(fonctionMap);
+                }
+            }
+        }
+        return  ResponseEntity.ok(fonct);
     }
 
 }

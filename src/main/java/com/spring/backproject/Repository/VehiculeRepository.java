@@ -21,5 +21,5 @@ public interface VehiculeRepository extends JpaRepository<Vehid,Integer> {
    List<Vehid> findCodeVehByGrpMarq(String grpMarque);
    List<Vehid> findCodeVehByNomVehAndNomInterne(String nomVeh,String nomInterne);
     List<Vehid> findAllCodeVehByNomVehAndNomInterneAndGrpMarq(String nomVeh,String nomInterne,String grpMarque);
-
+List<Vehid> findByCodeVeh(Integer codeVeh);
 }

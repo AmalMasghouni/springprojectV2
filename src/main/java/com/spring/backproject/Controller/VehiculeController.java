@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -134,7 +135,11 @@ public class VehiculeController {
                     map.put("grpMarq", vehicule.getGrpMarq());
                     map.put("fro", vehicule.getFro());
                     map.put("t", vehicule.getT());
-                    map.put("upd", vehicule.getUpd());
+                    if(vehicule.getUpd()!=null){
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String creationDate = dateFormat.format( vehicule.getUpd());
+                    map.put("upd", creationDate);}
+                    else { map.put("upd", " ");}
                     map.put("remarque", vehicule.getRemarque());
                     map.put("onlyElec", vehicule.getOnlyElec());
                     map.put("avertissElec", vehicule.getAvertissElec());

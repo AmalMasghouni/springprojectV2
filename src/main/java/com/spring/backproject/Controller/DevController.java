@@ -5,8 +5,10 @@ import com.spring.backproject.Repository.*;
 import com.spring.backproject.Service.GestionDeveloppementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +34,8 @@ public class DevController {
     UserRepository userRepository;
     @Autowired
     CdcRep cdcRep;
+    @Autowired
+    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final GestionDeveloppementService gestionDeveloppementService;
 
     public DevController(GestionDeveloppementService gestionDeveloppementService) {
@@ -58,7 +62,21 @@ public class DevController {
             @PathVariable String nomSite,
             @PathVariable String utilisateur,
             @PathVariable String refCdc)
-    {  String nomVeh = null;
+
+    {  String sql="SELECT d.id_dev as n, d.nom_dev as nomDev, c.nomCDC as cdc, c.idCDC as idcdc, c.refCDC as refCDCActia,\n" +
+            "       c.creation as datacdc, c.indCDC as indice," +
+            "       d.nomDLL as nomDll," +
+            "       CONCAT(u.first_name, ' ', u.last_name) as utilisateur," +
+            "       maj.nom_maj as maj," +
+            "       c.refCDC as refCdc," +
+            "       veh.nomveh as nomVehicule,veh.grpmarq as marque ,veh.nominterne as nomInterne" +
+            "FROM DEV d" +
+            "JOIN CDC c ON d.idcdc = c.idCDC" +
+            "JOIN Utilisateur u ON d.idrc= u.id " +
+            "JOIN maj maj on maj.id_maj = d.id_maj" +
+            "JOIN dev_vehicule devehi on devehi.id_dev = d.id_dev" +
+            "Join vehid veh on veh.code_veh = devehi.code_veh ";
+        String nomVeh = null;
         String nomInterne = null;
 
         if (modele != null && modele.matches("^\\w+\\[\\w+\\]$")) {
@@ -138,6 +156,209 @@ Map<String,List> response=new HashMap<>();
         return ResponseEntity.ok(devMapList);
 
     }
+    @GetMapping("/rechercheDEVparVersion")
+    public ResponseEntity<?> rechercheDEvVersion (@RequestParam("version") String version){
+        String regex = "^(.*?)\\((.*?)\\)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(version);
+        if (matcher.matches()) {String nomMaj = matcher.group(1);
+            String typeMaj = matcher.group(2);
+            List<DEV> Listdev=devrepository.findIdDevByMajNomMajAndMajTypeMaj(nomMaj,typeMaj);
+            List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(Listdev);
+            return ResponseEntity.ok(devMapList);}
+        else {
+            return ResponseEntity.badRequest().body("Format de données invalide.");}
+
+    }
+   /* @GetMapping("/rechercheDEVparNomsite")
+    public ResponseEntity<?> rechercheDEvNomDev (@RequestParam("site") String site){
+        SITES sites = siteRep.findByNomSite(site);
+        Integer idS=sites.getIdSite();
+            List<DEV> Listdev=devrepository.findByIdSite(idS);
+            List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(Listdev);
+            return ResponseEntity.ok(devMapList);}*/
+   /*@GetMapping("/rechercheDEVparutilisateur")
+    public ResponseEntity<?> rechercheDevUtilisateur (@RequestParam("utilisateur") String utilisateur){
+        String nom = null;
+        String prenom = null;
+
+        if (utilisateur != null) {
+            String[] parts = utilisateur.split(" ");
+            if (parts.length >= 2) {
+                nom = parts[0];
+                prenom = parts[1];
+            }
+        }
+        List<DEV> Listdev=devrepository.findByUtilisateurFirstNameAndUtilisateurLastName(nom,prenom);
+        List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(Listdev);
+        return ResponseEntity.ok(devMapList);}*/
+
+    /*@GetMapping("/rechercheDEVparrefCDC")
+    public ResponseEntity<?> rechercheDEvefCDC (@RequestParam("refCDC") String refCDC){
+        List<DEV> Listdev=devrepository.findByCdcRefCDC(refCDC);
+        List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(Listdev);
+        return ResponseEntity.ok(devMapList);}*/
+   /* @GetMapping("/rechercheDEVparMarque")
+    public ResponseEntity<?> rechercheDEvMarque(@RequestParam("marque") String marque){
+        List<DEV> Listdev=devrepository.findByVehidListGrpMarq(marque);
+        List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(Listdev);
+        return ResponseEntity.ok(devMapList);}*/
+    /*@GetMapping("/rechercheDEVparmodele")
+    public ResponseEntity<?> rechercheDEvModele(@RequestParam("modele") String modele){
+        String nomVeh = null;
+        String nomInterne = null;
+
+        if (modele != null && modele.matches("^\\w+\\[\\w+\\]$")) {
+            String[] parts = modele.split("\\[");
+            nomVeh = parts[0];
+            nomInterne = parts[1].substring(0, parts[1].length() - 1);
+
+            List<DEV> Listdev=devrepository.findByVehidListNomVehAndVehidListNomInterne(nomVeh,nomInterne);
+            List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(Listdev);
+            return ResponseEntity.ok(devMapList);}
+        else {
+            return ResponseEntity.badRequest().body("Format de données invalide.");}}*/
+
+
+    /*@GetMapping("/filterDev")
+    public ResponseEntity<?> filterDev(@RequestParam(value = "version", required = false) String version,
+                                       @RequestParam(value = "site", required = false) String site,
+                                       @RequestParam(value = "utilisateur", required = false) String utilisateur,
+                                       @RequestParam(value = "refCDC", required = false) String refCDC,
+                                       @RequestParam(value = "marque", required = false) String marque,
+                                       @RequestParam(value = "modele", required = false) String modele) {
+        List<DEV> filteredDevs = new ArrayList<>();
+
+        if (version != null) {
+            String regex = "^(.*?)\\((.*?)\\)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(version);
+            if (matcher.matches()) {String nomMaj = matcher.group(1);
+                String typeMaj = matcher.group(2);
+                List<DEV> Listdev=devrepository.findIdDevByMajNomMajAndMajTypeMaj(nomMaj,typeMaj);}
+        }
+
+        if (site != null) {
+            SITES sites = siteRep.findByNomSite(site);
+            Integer idS=sites.getIdSite();
+            List<DEV> Listdev=devrepository.findByIdSite(idS);
+        }
+
+        if (utilisateur != null) {
+            String nom = null;
+            String prenom = null;
+
+            if (utilisateur != null) {
+                String[] parts = utilisateur.split(" ");
+                if (parts.length >= 2) {
+                    nom = parts[0];
+                    prenom = parts[1];
+                }
+            }
+            List<DEV> Listdev=devrepository.findByUtilisateurFirstNameAndUtilisateurLastName(nom,prenom);
+        }
+
+        if (refCDC != null) {
+            List<DEV> Listdev=devrepository.findByCdcRefCDC(refCDC);
+        }
+
+        if (marque != null) {
+            List<DEV> Listdev=devrepository.findByVehidListGrpMarq(marque);
+        }
+
+        if (modele != null) {
+            String nomVeh = null;
+            String nomInterne = null;
+
+            if (modele != null && modele.matches("^\\w+\\[\\w+\\]$")) {
+                String[] parts = modele.split("\\[");
+                nomVeh = parts[0];
+                nomInterne = parts[1].substring(0, parts[1].length() - 1);
+
+                List<DEV> Listdev=devrepository.findIdDevByMajNomMajAndMajTypeMaj(nomVeh,nomInterne);}
+        }
+
+        List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(filteredDevs);
+        return ResponseEntity.ok(devMapList);
+    }
+
+
+
+*/
+    @GetMapping("/filterDev")
+    public ResponseEntity<?> filterDev(@RequestParam(value = "version", required = false) String version,
+                                       @RequestParam(value = "site", required = false) String site,
+                                       @RequestParam(value = "utilisateur", required = false) String utilisateur,
+                                       @RequestParam(value = "refCDC", required = false) String refCDC,
+                                       @RequestParam(value = "marque", required = false) String marque,
+                                       @RequestParam(value = "nomVeh", required = false) String nomVeh,
+                                       @RequestParam(value = "nomInterne", required = false) String nomInterne) {
+        List<DEV> filteredDevs = new ArrayList<>();
+        Long id=null;
+        if (version != null) {
+            String regex = "^(.*?)\\((.*?)\\)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(version);
+            if (matcher.matches()) {
+                String nomMaj = matcher.group(1);
+                String typeMaj = matcher.group(2);
+                DEV devs=devrepository.findByMajNomMajAndMajTypeMaj(nomMaj, typeMaj);
+                Long devversion=devs.getIdDev();
+
+
+            }
+        }
+        Integer s=0;
+        if (site != null) {
+            SITES sites = siteRep.findByNomSite(site);
+            Integer idS = sites.getIdSite();
+           DEV devs=devrepository.findByIdSite(idS);
+           Long devi=devs.getIdDev();
+           s=s+1;
+        }
+
+        if (utilisateur != null) {
+            String nom = null;
+            String prenom = null;
+
+            if (utilisateur != null) {
+                String[] parts = utilisateur.split(" ");
+                if (parts.length >= 2) {
+                    nom = parts[0];
+                    prenom = parts[1];
+                }
+            }
+            DEV devut=devrepository.findByUtilisateurFirstNameAndUtilisateurLastName(nom, prenom);
+            Long dev=devut.getIdDev();
+            s=s+1;
+
+        }
+
+        if (refCDC != null) {
+            DEV decdc=devrepository.findByCdcRefCDC(refCDC);
+            Long dev=decdc.getIdDev();
+            s=s+1;
+        }
+
+        if (marque != null) {
+            DEV devmarque=devrepository.findByVehidListGrpMarq(marque);
+            Long devidma=devmarque.getIdDev();
+            s=s+1;
+        }
+
+        if (nomVeh != null&& nomInterne!=null) {
+DEV modele=devrepository.findByVehidListNomVehAndVehidListNomInterne(nomVeh,nomInterne);
+                Long devmodel=modele.getIdDev();
+                s=s+1;
+
+            }
+
+
+        List<Map<String, Object>> devMapList = gestionDeveloppementService.createDevMapList(filteredDevs);
+        return ResponseEntity.ok(devMapList);
+    }
 
 
 }
+
+

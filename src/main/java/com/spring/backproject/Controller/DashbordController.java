@@ -28,7 +28,7 @@ public class DashbordController {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @GetMapping("/filtrer")
-    public ResponseEntity<?> filter(@RequestBody Map<String, String> filters) {
+    public ResponseEntity<?> filter(@RequestParam Map<String, String> filters) {
         String cdc = filters.get("cdc");
         String dev=filters.get("dev");
         String version=filters.get("version");
@@ -46,23 +46,29 @@ public class DashbordController {
 
 
         String sql =
-                "SELECT d.id_dev AS n, d.nom_dev, d.etat_dev, c.refCDC, c.nomCDC, d.nomDll, f.nomFamille, e.nom_ecu, CONCAT(u.first_name, ' ', u.last_name) AS developpeur "+
-                        "FROM DEV d , VERSIONMAJ V , MARQUE m , Vehid v" +
-                        "JOIN CDC c ON d.idcdc = c.idCDC "+
-                        "JOIN ECU e ON d.id_ecu = e.id_ecu "+
-                        "JOIN Utilisateur u ON d.idrc= u.id "+
-                        "JOIN Famille f ON e.id_famille = f.id_famille "+
-                        "JOIN SITES s ON s.NomSite = u.sitesList "+
-                         "JOIN VersionMaj ver ON ver";
+                "SELECT d.id_dev as n, d.nom_dev as nomDev, c.nomCDC as cdc, c.idCDC as idcdc, c.refCDC as refCDCActia,\n" +
+                        "       c.creation as datacdc, c.indCDC as indice,\n" +
+                        "       d.nomDLL as nomDll,\n" +
+                        "       CONCAT(u.first_name, ' ', u.last_name) as utilisateur,\n" +
+                        "       maj.nom_maj as maj,\n" +
+                        "       c.refCDC as refCdc,\n" +
+                        "       veh.nomveh as nomVehicule,veh.grpmarq as marque ,veh.nominterne as nomInterne" +
+                        "FROM DEV d" +
+                        "JOIN CDC c ON d.idcdc = c.idCDC" +
+                        "JOIN Utilisateur u ON d.idrc= u.id " +
+                        "JOIN maj maj on maj.id_maj = d.id_maj" +
+                        "JOIN dev_vehicule devehi on devehi.id_dev = d.id_dev" +
+                        "Join vehid veh on veh.code_veh = devehi.code_veh " +
+                        "  WHERE ";
         if(StringUtils.isNotEmpty(cdc)) {
-            sql += " WHERE d.idcdc = :cdc " ;
+            sql += " c.refCDC = :cdc  " ;
         }
 
         if(StringUtils.isNotEmpty(version)) {
             String nomMaj = version.substring(0, version.indexOf("("));
             String typeMaj = version.substring(version.indexOf("(") + 1, version.indexOf(")"));
-            System.out.println("NOM MAJ +++ : "+nomMaj);
-            sql += " AND V.NomVer = :nomMaj ";
+
+            sql += "  maj.nom_maj=:nomMaj AND maj.type_maj=:typeMaj AND ";
 
         }
         if(StringUtils.isNotEmpty(marque)) {
@@ -71,9 +77,9 @@ public class DashbordController {
         if(StringUtils.isNotEmpty(modele)) {
             sql += " AND ver.nomVeh = :modele ";
         }
-        /*if(StringUtils.isNotEmpty(site)) {
-            sql += " WHERE d.idSite = (" + selSite + ")";
-        }*/
+        if(StringUtils.isNotEmpty(site)) {
+            sql += " WHERE d.idSite = :site";
+        }
 
 
       /* List<CreerConsulter> results = namedParameterJdbcTemplate.query(sql, parameterSource, (rs, rowNum) -> {
@@ -164,7 +170,7 @@ public List<Famille> getAllFamille(){
         return ResponseEntity.ok().body(new AuthResponse(true,"famille cree"));
     }*/
 
-    @GetMapping("/filtrer")
+   /* @GetMapping("/filtrer")
     public ResponseEntity<?> filtrer(
             @RequestParam(required = false) String modele,
             @RequestParam(required = false) String marque,
@@ -176,6 +182,6 @@ public List<Famille> getAllFamille(){
         // Effectuer le traitement en fonction des paramètres reçus
 
         return ResponseEntity.ok().build();
-    }
+    }*/
 
 }

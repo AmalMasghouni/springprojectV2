@@ -17,4 +17,7 @@ public interface CdcRep extends JpaRepository<CDC,Long> {
     List<CDC> findByRefCDC(String refCDC);
     List<CDC> findAllIdCDCByRefCDC(String refCDC);
     List<CDC> findAllIdCDCByDEVSMajNomMajAndDEVSMajTypeMaj(String nomMaj,String typeMaj);
+    CDC findByIdCDC(Long idcdc);
+
+
 }

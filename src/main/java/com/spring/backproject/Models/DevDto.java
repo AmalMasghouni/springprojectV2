@@ -1,27 +1,15 @@
 package com.spring.backproject.Models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "DEV")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class DEV {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "IdDev")
-    private Long idDev;
+@Data
+public class DevDto {
 
-    @Column(name = "NomDev", length = 70)
+    private Long idDev;
     private String nomDev;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,23 +37,23 @@ public class DEV {
     @JoinColumn(name = "IdMaj")
     private MAJ maj;
 
-    @Column(name = "IdSite")
+
     private Integer idSite;
 
-    @Column(name = "DevPrecedent")
+
     private Integer devPrecedent;
 
-    @Column(name = "DevDuplique")
+
     private Boolean devDuplique;
 
-    @Column(name = "DevEnCoursUtilisation")
+
     private Boolean devEnCoursUtilisation;
 
-   @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdEtatDev")
     private EtatDev etatDev;
 
-   @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdTypeDev")
     private TYPE_DEV typeDev;
 
@@ -78,11 +66,8 @@ public class DEV {
     @Column(name = "IdMajPrecedent")
     private Integer idMajPrecedent;
     @ManyToMany(fetch = FetchType.LAZY)
-   private List<Cables> cablesList=new ArrayList<>();
+    private List<Cables> cablesList=new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "dev_fonction",
-            joinColumns = @JoinColumn(name = "id_dev"),
-            inverseJoinColumns = @JoinColumn(name = "id_fonction"))
     private List<Fonction> fonctionList=new ArrayList<>();
     @ManyToMany(fetch  =FetchType.LAZY)
     @JoinTable(name = "dev_vehicule",
@@ -94,7 +79,6 @@ public class DEV {
             joinColumns = @JoinColumn(name = "id_dev"),
             inverseJoinColumns = @JoinColumn(name = "id_valid"))
     private List<Validation> validationList=new ArrayList<>();
-
 
 
 }

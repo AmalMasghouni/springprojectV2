@@ -22,8 +22,8 @@ public class Fonction {
     private Integer ordre;
     private Integer codeDico;
     private String DescrAnglais;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "fonctionList",fetch = FetchType.LAZY)
     private List<DEV> DEVList =new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "fonctionList",fetch = FetchType.LAZY)
     private List<CDC>cdcList=new ArrayList<>();
 }

@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin("http://localhost:4200/")
@@ -27,6 +30,8 @@ public class FamilleController {
         famille.setDescrAnglais(famille.getDescrAnglais());
         famille.setPhrase(familleDto.getPhrase());
         famille.setOrdre(familleDto.getOrdre());
+
+
         famille.setUpdate(familleDto.getUpdate());
         famille.setSparePartsFilter(familleDto.getSparePartsFilter());
         famille.setGuidedMethFilter(familleDto.getGuidedMethFilter());
@@ -56,7 +61,29 @@ public class FamilleController {
     @GetMapping("/getAllFamille")
     public ResponseEntity<?>getAllFamille(){
         List<Famille> familles=familleRep.findAll();
-        return ResponseEntity.ok(familles);}
+        List<Map<String, Object>> familleMap =familles.stream()
+                .map(famille -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("idFamille",famille.getIdFamille());
+                    map.put("nomFamille",famille.getNomFamille());
+                    map.put("description",famille.getDescription());
+                    map.put("descrAnglais",famille.getDescrAnglais());
+                    map.put("ordre",famille.getOrdre());
+                    if (famille.getUpdate()!=null){
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        String creationDate = dateFormat.format(famille.getUpdate());
+                        map.put("update",creationDate);
+                    }
+                    else { map.put("update"," ");}
+
+                    map.put("guidedMethFilter",famille.getGuidedMethFilter());
+                    map.put("sparePartsFilter",famille.getSparePartsFilter());
+                    map.put("idFamilleHynes",famille.getIdFamilleHynes());
+                    map.put("descriptionHaynes",famille.getDescriptionHaynes());
+                    return map;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(familleMap);}
     @GetMapping("/getfamilleId/{idFamille}")
     public ResponseEntity<?>getFamilleById(@PathVariable Long idFamille){
         Famille familles=familleRep.findById(idFamille).orElse(null);

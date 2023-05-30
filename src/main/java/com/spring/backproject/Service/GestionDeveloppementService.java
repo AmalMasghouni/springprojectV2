@@ -1,10 +1,8 @@
 package com.spring.backproject.Service;
 
-import com.spring.backproject.Models.DEV;
-import com.spring.backproject.Models.Fonction;
-import com.spring.backproject.Models.SITES;
-import com.spring.backproject.Models.Vehid;
+import com.spring.backproject.Models.*;
 import com.spring.backproject.Repository.SiteRep;
+import com.spring.backproject.Repository.VersionMajRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,13 +17,16 @@ import java.util.Map;
 public class GestionDeveloppementService {
     @Autowired
     SiteRep siteRep;
+    @Autowired
+    VersionMajRepository versionMajRepository;
     public List<Map<String, Object>> createDevMapList(List<DEV> DEVList){
         List<Map<String, Object>> devMapList = new ArrayList<>();
         for (DEV dev : DEVList) {
             Map<String, Object> devMap = new HashMap<>();
             devMap.put("n", dev.getIdDev());
             devMap.put("nomDev",dev.getNomDev());
-            devMap.put("cdc",dev.getCdc().getNomCDC());
+            if(dev.getCdc()!=null){
+            devMap.put("cdc",dev.getCdc().getNomCDC());}
             devMap.put("idcdc",dev.getCdc().getIdCDC());
             if(dev.getCdc().getSignatureOk()!=null){
                 if(dev.getCdc().getSignatureOk()==true){devMap.put("etatCdc","signé");}
@@ -61,11 +62,26 @@ public class GestionDeveloppementService {
             devMap.put("famille",dev.getEcu().getFamille().getNomFamille());
             devMap.put("bug",dev.getNumBugzilla());
 
+            List<String> validation= new ArrayList<>();
+            for(Validation v: dev.getValidationList()){
+                if(v.getEtatValid()=="GT") {v.setEtatValid("test unitaire"); }
+                else {v.setEtatValid("Intégration");}
+                VERSION_MAJ vers=versionMajRepository.findByIdVer(v.getIdValid().longValue());
+                validation.add(v.getDateValid()+'-'+v.getEtatValid()+'-'+vers);
+            }
+            devMap.put("validation",validation);
+            devMap.put("commentaire",dev.getDevComment());
             List<String> nomFonction=new ArrayList<>();
             for(Fonction f: dev.getFonctionList()){
                 nomFonction.add(f.getNomFonction());
             }
+
             devMap.put("fonction",nomFonction);
+            List<String> fonctioncdc=new ArrayList<>();
+            for(Fonction f: dev.getCdc().getFonctionList()){
+                fonctioncdc.add(f.getNomFonction());
+            }
+            devMap.put("fonctionCDC",fonctioncdc);
             List<String> nomVehList = new ArrayList<>();
             for (Vehid vehid : dev.getVehidList()) {
                 nomVehList.add(vehid.getNomVeh()+'['+vehid.getNomInterne()+']');
